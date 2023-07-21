@@ -1,1 +1,203 @@
-starting
+
+from os import name
+from pickle import TRUE
+from random import randint
+from random import uniform
+from tabulate import tabulate
+
+
+
+def print_menu():
+    print("welcome in mashine learning\nmenu:\n1. learn\n2. check\n3. print")
+
+def random_list_of_numbers_generator(lowest_number, biggest_number, amount_of_numbers):
+
+    random_list = []
+    for i in range(0,amount_of_numbers):
+        random_list.append(uniform(lowest_number,biggest_number))
+    return random_list
+
+
+
+def perceptron(input_data,weight1,weight2,bias,names):
+
+    summ = summ_func(input_data, weight1, weight2, bias)
+
+    #summ = input1 * weight1 + input2 * weight2 + bias
+    
+    
+    if (summ>0):
+        name = names[0]
+    elif summ<=0:
+        name = names[1]
+    #statement=bool(statement)
+    return name
+
+def summ_func(input_data, weight1, weight2, bias):
+    summ = input_data[0] * weight1 + input_data[1] * weight2 + bias
+    return summ
+
+#def perceptron_learning(input_learning1, input_learning2, speed_of_learning, learn_statment, weight1=10, weight2=-10, bias=1 ):
+#    #basic_weight1=2
+#    #basic_weight2=4
+#    #basic_bias=5  #przesunięcie
+   
+
+#    if(len(input_learning1)==len(input_learning2)):
+#        for i in range(1, len(input_learning1)):
+#            #statement == Perceptron(input_learning1[i],input_learning2[i], weight1, weight2, bias)
+            
+#            #statement=bool(statement)
+
+
+#            if learn_statment==perceptron(input_learning1[i], input_learning2[i], weight1, weight2, bias):
+#                #print("ooooooooooooooooooooooo", type(input_learning1))
+#                #print("ooooooooooooooooooooooo", type(input_learning1[i]), type(speed_of_learning))
+#                weight1 = weight1 + input_learning1[i]*speed_of_learning
+#                weight2 = weight2 + input_learning2[i]*speed_of_learning
+#                bias = bias + bias*speed_of_learning
+#            #corretness == True
+#            else: print("nie ucze sie")
+#                #weight1 = weight1
+#                #weight2 = weight2
+#                #bias = bias
+#                #corretness == False
+
+#    else:print("wrong inputs sizes")
+
+
+#    print(weight1, weight2, bias)
+#    return weight1, weight2, bias#,correctness
+
+def perceptron_learning(learning_data, speed_of_learning, names, weight1=0, weight2=0, bias=0):
+    #basic_weight1=2
+    #basic_weight2=4
+    #basic_bias=5  #przesunięcie
+   
+    f=0
+    b=0
+    for i in range(1, len(learning_data)):
+        #speed_of_learning=speed_of_learning/(i**2)
+        #if(speed_of_learning<0.0021):
+        #    speed_of_learning=0.002
+
+        if learning_data[i][2]==names[1]:
+            b=-1
+
+        else:
+            b=1
+
+        if learning_data[i][2]!=perceptron(learning_data[i], weight1, weight2, bias,names):
+
+           weight1 = weight1 + learning_data[i][0]*speed_of_learning*b
+           weight2 = weight2 + learning_data[i][1]*speed_of_learning*b
+           bias = bias + bias*speed_of_learning*b
+           print(weight1, weight2, bias,speed_of_learning)
+           #corretness == True
+        else: 
+           
+           print("nie ucze sie")
+           f=f+1
+                #weight1 = weight1
+                #weight2 = weight2
+                #bias = bias
+                #corretness == False
+
+    print(f)
+
+
+    print(weight1, weight2, bias)
+    return weight1, weight2, bias#,correctness
+
+
+def learn_check(input_values,names,weight1,weight2,bias):
+   
+        for i in range(1,len(input_values)):
+
+            if(names[0]==perceptron(input_values[i],weight1,weight2,bias,names)):
+                print(i,". ",names[0],"inputs: ")
+                print(tabulate(input_values))
+                #print(i,". ",names[0],"  ","input1: ",input_values[i][0],"input2: ",input_values[i][1])
+
+            elif(names[1]==perceptron(input_values[i],weight1,weight2,bias,names)):
+                #print(i,". ",names[1],"  ","input1: ",input_values[i][0],"input2: ",input_values[i][1])
+                 print(i,". ",names[1],"inputs: ")
+                 print(tabulate(input_values))
+            #else: print(i, ". false  ""input1: ",input_values[i][0],"input2: ",input_values[i][1] )
+           
+def data_learning_generator(learning_samples, name,num_of_inputs,input1_values,input2_values):
+
+    list_diameter=random_list_of_numbers_generator(input1_values[0],input1_values[1],learning_samples)
+    list_lenght=random_list_of_numbers_generator(input2_values[0],input2_values[1],learning_samples)  
+    data=[[0] * (num_of_inputs+1) for i in range(learning_samples)]
+    for j in range(0,num_of_inputs+1):
+        list_diameter=random_list_of_numbers_generator(input1_values[0],input1_values[1],learning_samples)
+        for i in range (0,len(list_diameter)):
+            data[i][j]=list_diameter[i]
+            #data[i][1]=list_lenght[i]
+            #data[i][2]= name
+
+    return data
+
+def create_data(learning_samples,values11,values12,values21,values22, number_of_inputs, names):
+    #name1="cylinder"
+    #name2="ring"
+   
+   
+    #data= data_learning_generator(learning_samples, name1,2,[1,5],[100,150]) + data_learning_generator(learning_samples, name2,2,[100,150],[1,5])
+    data1= data_learning_generator(learning_samples, names[0],number_of_inputs,values11,values12)
+    data2= data_learning_generator(learning_samples, names[1],number_of_inputs,values21,values22) 
+
+    data=[[0] * (number_of_inputs+1) for i in range(learning_samples*2)]
+
+    for j in range(0,number_of_inputs):
+
+        for i in range(0,len(data1)+len(data2)):
+
+            if(i%2==1):
+                a=(i-1)/2
+                a=int(a)
+                data[i][j]=data1[a][j] 
+              
+
+            else:
+                b=i/2
+                b=int(b)
+                data[i][j]=data2[b][j]
+              
+
+    return data
+
+
+#while(True):
+#    print_menu()
+#    option = int(input('Enter your choice: '))
+#    if (option == 4):
+#        break
+
+
+#list_diameter=[]
+#list_lenght=[]
+
+
+#*****************learnig data***********************#
+learning_samples=10
+names=['cylinder','ring']
+values11=[1,5]
+values12=[10,15]
+values21=[10,15]
+values22=[1,5]
+number_of_inputs=2
+
+#****************learning data***********************#
+speed_of_learning=0.02
+learning_data=create_data(learning_samples,values11,values12,values21,values22,number_of_inputs, names)
+data=perceptron_learning(learning_data, speed_of_learning, names)
+
+#****************learning check**********************#
+v11=[1,150]
+v12=[1,150]
+v21=[1,150]
+v22=[1,150]
+checking_data=create_data(learning_samples,v11,v12,v21,v22,number_of_inputs,names)
+learn_check(checking_data,names,data[0],data[1],data[2])
